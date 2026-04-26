@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - FurReal Admin Panel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin-login.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo">
+                    <span class="logo-icon">🐾</span>
+                    <span class="logo-text">Fur<span>Real</span></span>
+                </div>
+                <span class="admin-badge">Admin Portal</span>
+            </div>
+
+            <div class="login-body">
+                <h2>Welcome Back, Admin</h2>
+                <p class="login-subtitle">Sign in to manage your pet adoption platform</p>
+
+                <form id="adminLoginForm">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">📧</span>
+                            <input type="email" id="email" name="email" placeholder="admin@furreal.com" required autocomplete="off">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-wrapper">
+                            <span class="input-icon">🔒</span>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                            <button type="button" class="toggle-password" id="togglePassword">👁️</button>
+                        </div>
+                    </div>
+
+                    <div class="form-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="rememberMe"> Remember me
+                        </label>
+                        <a href="#" class="forgot-link">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="login-btn" id="loginBtn">
+                        <span>Login to Dashboard</span>
+                        <span class="btn-icon">→</span>
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    <p>Secure admin access only</p>
+                    <p class="demo-credentials">Demo: admin@furreal.com / admin123</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="login-info">
+            <div class="info-card">
+                <div class="info-icon">🛡️</div>
+                <h4>Secure Admin Access</h4>
+                <p>This portal is for authorized administrators only. All activities are logged.</p>
+            </div>
+            <div class="info-card">
+                <div class="info-icon">📊</div>
+                <h4>Full Control</h4>
+                <p>Manage pets, users, adoptions, and platform settings from one dashboard.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <script src="admin-login.js"></script>
+</body>
+</html>
