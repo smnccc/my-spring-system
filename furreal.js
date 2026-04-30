@@ -7,7 +7,7 @@
 'use strict';
 
 // ==================== API SERVICE LAYER ====================
-const API_BASE_URL = 'https://railway.app';
+const API_BASE_URL = 'https://furreal.up.railway.app';
 
 
 const ApiService = {
