@@ -6,8 +6,8 @@
 'use strict';
 
 // ==================== CONFIGURATION ====================
-const ADMIN_API_BASE_URL = 'http://localhost:6060/admin';
-const API_BASE_URL = 'http://localhost:6060';
+const ADMIN_API_BASE_URL = 'https://furreal.up.railway.app/admin';
+const API_BASE_URL = 'https://furreal.up.railway.app';
 
 const LOCATIONS = [
   'Metro Manila, Philippines','Quezon City, Philippines','Makati City, Philippines',
