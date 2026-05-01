@@ -1,73 +1,77 @@
 package com.example.furreal.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.resend.Resend;
+import com.resend.core.exception.ResendException;
+import com.resend.services.emails.model.SendEmailRequest;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
-    
-    @Autowired(required = false)  // ← ITO LANG ANG BAGO (optional)
-    private JavaMailSender mailSender;
-    
-    @Value("${spring.mail.username:}")  // ← ITO LANG ANG BAGO (may default)
-    private String fromEmail;
-    
+
+    @Value("${RESEND_API_KEY}")
+    private String apiKey;
+
+    private Resend resend;
+
+    @PostConstruct
+    public void init() {
+        resend = new Resend(apiKey);
+    }
+
     public void sendOTPEmail(String toEmail, String otpCode, String purpose) {
-        // ITO LANG ANG BAGO (check if available)
-        if (mailSender == null || fromEmail == null || fromEmail.isEmpty()) {
-            System.out.println("⚠️ Email not configured. OTP: " + otpCode + " for " + toEmail);
-            return;
-        }
+        String subject;
+        String htmlBody;
         
+        if ("REGISTRATION".equals(purpose)) {
+            subject = "🐾 FurReal - Verify Your Email Address";
+            htmlBody = String.format(
+                "<div style='font-family: Arial, sans-serif; padding: 20px;'>" +
+                "<h2 style='color: #6EE7B7;'>Welcome to FurReal! 🐾</h2>" +
+                "<p>Thank you for joining our pet adoption community!</p>" +
+                "<p>Your verification code is:</p>" +
+                "<h1 style='font-size: 32px; color: #6EE7B7; letter-spacing: 5px;'>%s</h1>" +
+                "<p>This code will expire in <strong>10 minutes</strong>.</p>" +
+                "<br/><p>Best regards,<br/>The FurReal Team 🐕🐈</p></div>",
+                otpCode
+            );
+        } else if ("FORGOT_PASSWORD".equals(purpose)) {
+            subject = "🔐 FurReal - Password Reset Request";
+            htmlBody = String.format(
+                "<div style='font-family: Arial, sans-serif; padding: 20px;'>" +
+                "<h2 style='color: #6EE7B7;'>Password Reset Request 🔐</h2>" +
+                "<p>We received a request to reset your password.</p>" +
+                "<p>Your OTP verification code is:</p>" +
+                "<h1 style='font-size: 32px; color: #6EE7B7; letter-spacing: 5px;'>%s</h1>" +
+                "<p>This code will expire in <strong>10 minutes</strong>.</p>" +
+                "<br/><p>If you did not request this, please ignore this email.</p>" +
+                "<p>Best regards,<br/>The FurReal Team 🐾</p></div>",
+                otpCode
+            );
+        } else {
+            subject = "FurReal - Verification Code";
+            htmlBody = String.format(
+                "<h2>Your verification code is: <strong style='font-size: 28px;'>%s</strong></h2>" +
+                "<p>This code expires in 10 minutes.</p>",
+                otpCode
+            );
+        }
+
+        SendEmailRequest request = SendEmailRequest.builder()
+                .from("FurReal <onboarding@resend.dev>")
+                .to(toEmail)
+                .subject(subject)
+                .html(htmlBody)
+                .build();
+
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(fromEmail);
-            message.setTo(toEmail);
-            message.setSubject(getSubject(purpose));
-            message.setText(getEmailBody(otpCode, purpose));
-            mailSender.send(message);
-            System.out.println("✅ OTP email sent to: " + toEmail);
-        } catch (Exception e) {
-            System.out.println("❌ Email failed: " + e.getMessage());
+            resend.emails().send(request);
+            System.out.println("✅ OTP email sent successfully to: " + toEmail);
+        } catch (ResendException e) {
+            System.out.println("❌ Failed to send email: " + e.getMessage());
+            // I-print pa rin ang OTP sa logs para may backup
+            System.out.println("⚠️ OTP for " + toEmail + ": " + otpCode);
         }
-    }
-    
-    private String getSubject(String purpose) {
-        if ("REGISTRATION".equals(purpose)) {
-            return "🐾 FurReal - Verify Your Email Address";
-        } else if ("FORGOT_PASSWORD".equals(purpose)) {
-            return "🔐 FurReal - Password Reset Request";
-        }
-        return "FurReal - Verification Code";
-    }
-    
-    private String getEmailBody(String otpCode, String purpose) {
-        if ("REGISTRATION".equals(purpose)) {
-            return String.format(
-                "Welcome to FurReal! 🐾\n\n" +
-                "Thank you for joining our pet adoption community!\n\n" +
-                "Your verification code is: %s\n\n" +
-                "This code will expire in 10 minutes.\n\n" +
-                "Please enter this code to complete your registration.\n\n" +
-                "Best regards,\n" +
-                "The FurReal Team 🐕🐈",
-                otpCode
-            );
-        } else if ("FORGOT_PASSWORD".equals(purpose)) {
-            return String.format(
-                "Password Reset Request 🔐\n\n" +
-                "We received a request to reset your password for your FurReal account.\n\n" +
-                "Your OTP verification code is: %s\n\n" +
-                "This code will expire in 10 minutes.\n\n" +
-                "If you did not request this, please ignore this email.\n\n" +
-                "Best regards,\n" +
-                "The FurReal Team 🐾",
-                otpCode
-            );
-        }
-        return String.format("Your FurReal verification code is: %s\n\nThis code expires in 10 minutes.", otpCode);
     }
 }
