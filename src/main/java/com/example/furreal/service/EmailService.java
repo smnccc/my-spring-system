@@ -9,13 +9,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class EmailService {
     
-    @Autowired
+    @Autowired(required = false)  // ← ITO LANG ANG BAGO (optional)
     private JavaMailSender mailSender;
     
-    @Value("${spring.mail.username}")
+    @Value("${spring.mail.username:}")  // ← ITO LANG ANG BAGO (may default)
     private String fromEmail;
     
     public void sendOTPEmail(String toEmail, String otpCode, String purpose) {
+        // ITO LANG ANG BAGO (check if available)
+        if (mailSender == null || fromEmail == null || fromEmail.isEmpty()) {
+            System.out.println("⚠️ Email not configured. OTP: " + otpCode + " for " + toEmail);
+            return;
+        }
+        
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             message.setFrom(fromEmail);
@@ -23,10 +29,9 @@ public class EmailService {
             message.setSubject(getSubject(purpose));
             message.setText(getEmailBody(otpCode, purpose));
             mailSender.send(message);
-            System.out.println("✅ OTP email sent successfully to: " + toEmail);
+            System.out.println("✅ OTP email sent to: " + toEmail);
         } catch (Exception e) {
-            System.err.println("❌ Failed to send email: " + e.getMessage());
-            e.printStackTrace();
+            System.out.println("❌ Email failed: " + e.getMessage());
         }
     }
     
