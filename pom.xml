@@ -33,17 +33,18 @@
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 		
-		<!-- ✅ POSTGRESQL JDBC DRIVER - Kailangan ito ✅ -->
+		<!-- POSTGRESQL JDBC DRIVER -->
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		
-		<!-- Spring Boot Mail -->
+		<!-- ✅ RESEND EMAIL API (PALITAN ITO) ✅ -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-mail</artifactId>
+			<groupId>com.resend</groupId>
+			<artifactId>resend-java</artifactId>
+			<version>3.4.0</version>
 		</dependency>
 		
 		<!-- Spring Boot Test -->
